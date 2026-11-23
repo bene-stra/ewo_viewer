@@ -101,6 +101,8 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 
+  plot_auswahl <- reactiveValues(letzte = NULL)
+
   stichtag_tabelle <- reactive({
     dt <- daten[abzug_dat >= input$zeitraum[1] & abzug_dat <= input$zeitraum[2]]
     sel <- input$spalten
@@ -140,6 +142,10 @@ server <- function(input, output, session) {
   observe({
     tab <- stichtag_tabelle()
     spalten <- setdiff(names(tab), "Stichtag")
+    if (identical(spalten, plot_auswahl$letzte)) {
+      return()
+    }
+    plot_auswahl$letzte <- spalten
     aktuell <- intersect(input$plot_spalten, spalten)
     if (length(aktuell) == 0) {
       aktuell <- grep("insgesamt$", spalten, value = TRUE)
@@ -147,6 +153,7 @@ server <- function(input, output, session) {
     if (length(aktuell) == 0) {
       aktuell <- spalten
     }
+    freezeReactiveValue(session, "plot_spalten")
     updateSelectizeInput(session, "plot_spalten",
                          choices = spalten, selected = aktuell,
                          server = TRUE)
