@@ -70,7 +70,7 @@ ui <- fluidPage(
         format = "dd.mm.yyyy",
         language = "de"
       ),
-      selectInput(
+      selectizeInput(
         "spalten", "Differenzierung nach Spalten",
         choices = label_spalten,
         multiple = TRUE,
